@@ -1,0 +1,5 @@
+ALTER TABLE ONLY players
+ADD CONSTRAINT pk_players PRIMARY KEY ("id");
+
+ALTER TABLE ONLY clubs
+ADD CONSTRAINT pk_clubs PRIMARY KEY ("id");
