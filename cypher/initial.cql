@@ -3,7 +3,11 @@ CREATE CONSTRAINT ON (player:Player)
 ASSERT player.id IS UNIQUE;
 
 //Index Clubs
-CREATE INDEX ON :Club(id);
+CREATE CONSTRAINT ON (club:Club)
+ASSERT club.id IS UNIQUE;
+
+// Make sure clubs have a name
+CREATE CONSTRAINT ON (c:Club) ASSERT EXISTS(club.name);
 
 //Load Players
 USING PERIODIC COMMIT
@@ -23,6 +27,9 @@ LOAD CSV WITH HEADERS FROM "file:///transfers.csv" AS row
 MERGE (club:Club {id: row.buyerClubUri})
 ON CREATE SET club.name = row.buyerClubName, club.country = row.buyerClubCountry;
 
+CREATE CONSTRAINT ON ()-[player:OF_PLAYER]-()
+ASSERT exists(player.age);
+
 //Load Transfers
 USING PERIODIC COMMIT
 LOAD CSV WITH HEADERS FROM "file:///transfers.csv" AS row
@@ -31,10 +38,9 @@ MATCH (source:Club {id: row.sellerClubUri})
 MATCH (destination:Club {id: row.buyerClubUri})
 MERGE (t:Transfer {id: row.transferUri})
 ON CREATE SET t.season = row.season,
-              t.player_age = row.playerAge,
               t.rank = row.transferRank,
               t.fee = row.transferFee
-MERGE (t)-[:OF_PLAYER]->(player)
+MERGE (t)-[:OF_PLAYER {age : toint(row.playerAge)}]->(player)
 MERGE (t)-[:FROM_CLUB]->(source)
 MERGE (t)-[:TO_CLUB]->(destination);
 
@@ -60,3 +66,6 @@ SET t.year = year;
 MATCH (t:Transfer)
 WHERE t.fee STARTS WITH 'Loan'
 SET t:Loan;
+
+CREATE INDEX ON :Club(name);
+CREATE INDEX ON :Player(name);
