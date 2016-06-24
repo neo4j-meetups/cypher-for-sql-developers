@@ -28,6 +28,7 @@ CREATE TABLE transfers (
     "fee" character varying(50) NOT NULL,
     "numericFee" integer NOT NULL,
     "player_age" smallint NOT NULL,
+    "season" character varying(5) NOT NULL,
     "player_id" character varying(100) NOT NULL REFERENCES players (id),
     "from_club_id" character varying(100) NOT NULL REFERENCES clubs (id),
     "to_club_id" character varying(100) NOT NULL REFERENCES clubs (id)
