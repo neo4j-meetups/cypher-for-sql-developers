@@ -7,7 +7,7 @@ CREATE CONSTRAINT ON (club:Club)
 ASSERT club.id IS UNIQUE;
 
 // Make sure clubs have a name
-CREATE CONSTRAINT ON (c:Club) ASSERT EXISTS(club.name);
+CREATE CONSTRAINT ON (club:Club) ASSERT EXISTS(club.name);
 
 //Load Players
 USING PERIODIC COMMIT
